@@ -28,7 +28,7 @@ parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float,
 
 def define_model(is_resnet, is_densenet, is_senet):
     if is_resnet:
-        original_model = resnet.resnet50(pretrained = True)
+        original_model = resnet.resnet50(pretrained = False)
         Encoder = modules.E_resnet(original_model) 
         model = net.model(Encoder, num_features=2048, block_channel = [256, 512, 1024, 2048])
     if is_densenet:
@@ -36,7 +36,8 @@ def define_model(is_resnet, is_densenet, is_senet):
         Encoder = modules.E_densenet(original_model)
         model = net.model(Encoder, num_features=2208, block_channel = [192, 384, 1056, 2208])
     if is_senet:
-        original_model = senet.senet154(pretrained='imagenet')
+        #original_model = senet.senet154(pretrained='imagenet')
+        original_model = senet.senet154()
         Encoder = modules.E_senet(original_model)
         model = net.model(Encoder, num_features=2048, block_channel = [256, 512, 1024, 2048])
 
@@ -46,7 +47,7 @@ def define_model(is_resnet, is_densenet, is_senet):
 def main():
     global args
     args = parser.parse_args()
-    model = define_model(is_resnet=True, is_densenet=False, is_senet=False)
+    model = define_model(is_resnet=False, is_densenet=True, is_senet=False)
  
     if torch.cuda.device_count() == 8:
         model = torch.nn.DataParallel(model, device_ids=[0, 1, 2, 3, 4, 5, 6, 7]).cuda()
@@ -56,7 +57,8 @@ def main():
         batch_size = 32
     else:
         model = model.cuda()
-        batch_size = 4
+
+        batch_size = 1
         #batch_size = 11
 
     cudnn.benchmark = True

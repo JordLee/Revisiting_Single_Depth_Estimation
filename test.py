@@ -16,15 +16,15 @@ def main():
     global is_densenet
     global is_senet
     global pretrain_logical
-    is_resnet=True
+    is_resnet=False
     is_densenet= False
-    is_senet= False
-    pretrain_logical = False
+    is_senet= True
+    pretrain_logical = True
     model = define_model()
     # model = torch.nn.DataParallel(model).cuda()
     # model.load_state_dict(torch.load('./pretrained_model/model_senet'))
     model = model.cuda().float()
-    model.load_state_dict(torch.load('model_output/resnet_untrained/model_epoch_4.pth'))
+    model.load_state_dict(torch.load('model_output/senet_trained/model_epoch_1.pth'))
     test_loader = loaddata.getTestingData(1)
     test(test_loader, model, 0.25)
 
